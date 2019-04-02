@@ -1,5 +1,9 @@
 var $ = (id)=>document.querySelector(id);
-var audioContext;
+var audioContext = new AudioContext();
+var workerFactory;
+audioContext.createAudioWorker("vocalcanseler.js").then(function(factory) {
+  workerFactory = factory;
+});
 
 function readFile(file) {
   return new Promise((resolve, reject)=>{
@@ -20,13 +24,15 @@ window.addEventListener('load', ()=>{
     var file = $("#file").files[0]; // FileList object
     if (!file.type.match('audio.*'))
       return;
-    audioContext = new AudioContext();
     readFile(file)
-    .then((audioData)=>decodeAudioData(audioContext, audioData))
+    .then((data)=>decodeAudioData(audioContext, data))
     .then((buffer)=>{
       var source = audioContext.createBufferSource(); // creates a sound source
+      var workerNode = workerFactory.createNode(2, 2);
+
       source.buffer = buffer;                    // tell the source which sound to play
-      source.connect(audioContext.destination);       // connect the source to the context's destination (the speakers)
+      source.connect(workerNode);
+      workerNode.connect(audioContext.destination);
       source.start(0);                           // play the source now
     });
   });
