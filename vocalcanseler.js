@@ -8,7 +8,7 @@ onnodecreate = function(e) {
 
 onaudioprocess = function(e) {
   for (var i = 0; i < e.inputs[0][0].length; i++) {
-    e.outputs[0][0][i] = e.inputs[0][0][i];//e.inputs[0][0][i] - e.inputs[0][1][i];
-    e.outputs[0][1][i] = e.inputs[0][1][i];//e.inputs[0][0][i] + e.inputs[0][1][i];
+    e.outputs[0][0][i] = e.inputs[0][0][i] - e.inputs[0][1][i];
+    e.outputs[0][1][i] = e.inputs[0][0][i] + e.inputs[0][1][i];
   }
 };
